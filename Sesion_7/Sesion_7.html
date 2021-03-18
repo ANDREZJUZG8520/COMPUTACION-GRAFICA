@@ -9,17 +9,19 @@
           padding: 10px;
           width: 100%;
           text-align: center;
-          color: #FFFFFF;
+          color: #00ffff;
       }
     </style>
   </head>
   <body>
     <div id="info"><p id="transf">TRASLACIÓN</p>
-          Usar flecha arriba y abajo para mover sobre eje Y<br/>
-		  Usar flecha izquierda y derecha para mover sobre eje X<br/>
-		  Usar tecla '+' y '-' para mover sobre eje Z<br/>
-		  Usar tecla NumPad5 ('ESPACIO') para mover al origen<br/>
-		  Usar 'R' para rotar, 'T' para trasladar y 'E' para escalar<br/>
+		 Usar 'R' para rotar, 'T' para trasladar y 'E' para escalar<br/>
+         translacion y escalado con flechas y las teclas (-)(+)<br/>
+		 La Rotacion en X con las teclas (-)(+) <br/>
+		 La Rotacion en Z con las flechas verticales + alguna flecha lateral para activar <br/>
+		 La Rotacion en Y flechas laterales + flecha arriba o abajo para activar <br/>
+		  
+		  
     </div>
     <script src="js/three.min.js"></script>
     <script>
@@ -34,7 +36,12 @@
 		var endKey = false;
 		var Tecla_R=false;
 		var object, transf = 'T';
-		var angulo= Math.Pi/12;
+		var tetta=0;
+		var xRotacion = true ;
+		var yRotacion= true;
+		var zRotacion = true;
+		
+
 		init();
 		animate();
 	
@@ -53,21 +60,39 @@
 				switch ( event.keyCode ) {
 					case 189: // 
 						endKey = true;
+						zRotacion = true;
+						xRotacion = false;
+	                    yRotacion= false;
 						break;
 					case 187: // 
 						homeKey = true;
+						zRotacion = true;
+						xRotacion = false;
+	                    yRotacion= false;
 						break;
 					case 37: // 
 						leftArrow = true;
+						xRotacion = true;
+						yRotacion= false;
+						zRotacion = false;
 						break;
 					case 38: // TRASLADAR EN DIRECCION POSITIVA
 						upArrow = true;
+						yRotacion= true;
+						zRotacion = false;
+						xRotacion = false;
 						break;
 					case 39:
 						rightArrow = true;
+						xRotacion = true;
+						yRotacion= false;
+						zRotacion = false;
 						break;
 					case 40: // TRASLADAR EN DIRECCION NEGATIVA
 						downArrow = true;
+					    yRotacion= true;
+						zRotacion = false;
+						xRotacion = false;
 						break;
 					case 32:  // IR AL ORIGEN DE LAS COORDENADAS
 						clearKey = true;
@@ -96,13 +121,17 @@
 				homeKey = false;
 				endKey = false;
 				Tecla_R=true;
+				xRotacion = false;
+		        yRotacion= false;
+		        zRotacion = false;
+
 			};	  	
 			
 			document.addEventListener( 'keydown', onKeyDown, false );
 			document.addEventListener( 'keyup', onKeyUp, false );
 			
 			//ELEMENTOS DE ESCENA
-			var size = 10;
+			var size = 30;
 			var arrowSize = 1;
 			var divisions = size;
 			var origin = new THREE.Vector3( 0, 0, 0 );
@@ -163,9 +192,9 @@
 			scene.add( object );
 			
 			//MOVER LA CÁMARA
-			camera.position.x = 5;
-			camera.position.y = 10;	 
-		  	camera.position.z =  10;			
+			camera.position.x = 15;
+			camera.position.y = 20;	 
+		  	camera.position.z = 20;			
 		  	camera.lookAt( origin );
 			}
     
@@ -181,26 +210,26 @@
 			tx=1; ty=1; tz=1;
 		}if(transf == 't') {
 			tx=1; ty=1; tz=1;
-		}if(transf == 'R') {
-			tx=1; ty=1; tz=1;
+		if(transf == 'R')
+		tx=1; ty=1; tz=1;
 		}
 		if(upArrow) {
-			ty = (transf == 'T' ? 1 : transf == 'E' ? 1.1 : transf == 'R' ? angulo : 0);
+			ty = (transf == 'T' ? 1 : transf == 'E' ? 1.1 :transf == 'R' ? .1:  0);
 		}
 		if(downArrow) {
-			ty = (transf == 'T' ? -1 : transf == 'E' ? 10/11 : transf == 'R' ? angulo : 0);
+			ty = (transf == 'T' ? -1 : transf == 'E' ? 10/11 : transf == 'R' ? -.1 :  0);
 		}
 		if(leftArrow) {
-			tx= (transf == 'T' ? -1 : transf == 'E' ? 1.1 : transf == 'R' ? angulo : 0);
+			tx= (transf == 'T' ? -1 : transf == 'E' ? 1.1 : transf == 'R' ? -.1 :  0);
 		}
 		if(rightArrow) {
-			tx= (transf == 'T' ? 1 : transf == 'E' ? 10/11 : transf == 'R' ? angulo : 0);
+			tx= (transf == 'T' ? 1 : transf == 'E' ? 10/11 :transf == 'R' ? .1 :  0);
 		}
 		if(homeKey) {
-			tz= (transf == 'T' ? 1 : transf == 'E' ? 1.1 : transf == 'R' ? angulo : 0);
+			tz= (transf == 'T' ? 1 : transf == 'E' ? 1.1 :transf == 'R' ? .1 :  0 );
 		}
 		if(endKey) {
-			tz=(transf == 'T' ? -1 : transf == 'E' ? 10/11 : transf == 'R' ? angulo : 0);
+			tz=(transf == 'T' ? -1 : transf == 'E' ? 10/11 : transf == 'R' ? -.1 :  0);
 		}
 		if(clearKey) {
 			tx=-object.position.x;
@@ -223,27 +252,35 @@
 					0, 0, 0, 1);
 
 		//ROTACIONES
-        //MATRIZ DE ROTACIÓN EN EJE X
-		// se cree que las matrices estan bien 
-		//Error con la rotacion al oprimir las flechas, no se aplica la rotacion 
-	   
-		if(transf == 'R'){
+		
+
+		//MATRIZ DE ROTACIÓN EN EJE X
+		if(transf == 'R'&& xRotacion ){
+		var ct = Math.cos(ty);
+		var st = Math.sin(ty);
+		var t = new THREE.Matrix4();
 			t.set( 	1,  0,  0, 0,
-					0, Math.cos(angulo),-Math.sen(angulo), 0,   
-					0, Math.sen(angulo), Math.cos(angulo), 0,
+					0, ct,-st, 0, 
+					0, st, ct, 0,
 					0,  0,  0, 1 );		
 		}
 		//MATRIZ DE ROTACIÓN EN EJE Y
-		else if(transf == 'R'){
-			t.set( 	Math.cos(angulo), 0, Math.sen(angulo), 0,
+		else if(transf == 'R'&&yRotacion){
+		var ct = Math.cos(tx);
+		var st = Math.sin(tx);
+		var t = new THREE.Matrix4();
+			t.set( 	ct, 0, st, 0,
 					 0, 1,  0, 0, 
-				   -Math.sen(angulo), 0, Math.cos(angulo), 0,
+				   -st, 0, ct, 0,
 					 0, 0,  0, 1 );		
 		}
-		///MATRIZ DE ROTACIÓN EN EJE Z
-		else if (transf == 'R'){
-			t.set( 	Math.cos(angulo),-Math.sen(angulo), 0, 0,
-			        Math.sen(angulo), Math.cos(angulo), 0, 0, 
+		//MATRIZ DE ROTACIÓN EN EJE Z
+		else if (transf == 'R'&& zRotacion){
+		var ct = Math.cos(tz);
+		var st = Math.sin(tz);
+		var t = new THREE.Matrix4();
+			t.set( 	ct,-st, 0, 0,
+				    st, ct, 0, 0, 
 					 0,  0, 1, 0,
 					 0,  0, 0, 1 );		
 		}
