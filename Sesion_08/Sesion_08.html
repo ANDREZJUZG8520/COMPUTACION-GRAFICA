@@ -21,9 +21,9 @@
     <script>
 		var scene, aspect, camera, renderer;
 		var startTime = Date.now();		
-		var upArrow = false;
-		var downArrow = false;
+		var Aplicar= false;
 		var object;
+
 		init();
 		animate();
 	
@@ -87,7 +87,7 @@
             var arrowZ = new THREE.ArrowHelper( z, origin, arrowSize, colorB );
 			
 			//CREAR LAS GEOMETRÍAS
-			var geometry = new THREE.BoxGeometry( 3, 3, 3 );
+			var geometry = new THREE.BoxGeometry( 1, 1, 1 );
 			for ( var i = 0; i < geometry.faces.length; i ++ ) {
 				switch(i){
 					case 0: case 1: geometry.faces[ i ].color = colorRd; break;
@@ -127,18 +127,17 @@
     function render(){
         var dtime = Date.now()-startTime;
 		var tx=0, ty=0, tz=0;
-		if(upArrow) {
-			tx=1;
+		var sc=1;
+		if(Aplicar) {
+			tx=0.5, ty=0.5, tz=0.5 ,sc=1;
 		}
-		if(downArrow) {
-			tx=-1;
-		}
+		
 
 		//MATRIZ DE TRASLACIÓN
 		var t = new THREE.Matrix4();		//Crear la matriz de traslación
-		t.set( 	1, 0, 0, tx,
-				0, 1, 0, ty, 
-				0, 0, 1, tz,
+		t.set( 	sc, 0, 0, tx,
+				0, sc, 0, ty, 
+				0, 0, sc, tz,
 				0, 0, 0, 1	);
 
 		object.applyMatrix(t);				//Aplicar la matriz de traslación al objeto				
@@ -149,4 +148,6 @@
     </script>
   </body>
 </html>
+
+
 
